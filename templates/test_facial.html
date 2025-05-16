@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>تست چهره‌ای (۹ حالته با تصویر)</title>
+</head>
+<body>
+    <h3>تست چهره‌ای - با دیدن تصویر و شنیدن صدا، حالت چهره را انتخاب کن</h3>
+
+    <div style="margin: 20px;">
+        <img id="face" src="" alt="تصویر چهره" width="250" height="250">
+    </div>
+
+    <div>
+        <button onclick="respond('شاد')">شاد</button>
+        <button onclick="respond('غمگین')">غمگین</button>
+        <button onclick="respond('عصبانی')">عصبانی</button>
+        <button onclick="respond('بی‌تفاوت')">بی‌تفاوت</button>
+        <button onclick="respond('ترسیده')">ترسیده</button>
+        <button onclick="respond('مضطرب')">مضطرب</button>
+        <button onclick="respond('شگفت‌زده')">شگفت‌زده</button>
+        <button onclick="respond('مبهوت')">مبهوت</button>
+        <button onclick="respond('عاشقانه')">عاشقانه</button>
+    </div>
+
+    <audio id="audio" autoplay></audio>
+
+    <script>
+        const name = "{{ name }}";
+        const test_type = "{{ test_type }}";
+        const session_id = "{{ session_id }}";
+        const participant_id = "{{ participant_id }}";
+        const age = "{{ age }}";
+        const gender = "{{ gender }}";
+        const education = "{{ education }}";
+        const job = "{{ job }}";
+        const marital_status = "{{ marital_status }}";
+        const attempt = "{{ attempt }}";
+
+        const trials = [
+            {image: "/static/visual/happy.png", sound: "/static/audio/happy.mp3", stimulus: "شاد"},
+            {image: "/static/visual/sad.png", sound: "/static/audio/sad.mp3", stimulus: "غمگین"},
+            {image: "/static/visual/angry.png", sound: "/static/audio/angry.mp3", stimulus: "عصبانی"},
+            {image: "/static/visual/neutral.png", sound: "/static/audio/neutral.mp3", stimulus: "بی‌تفاوت"},
+            {image: "/static/visual/afraid.png", sound: "/static/audio/afraid.mp3", stimulus: "ترسیده"},
+            {image: "/static/visual/anxious.png", sound: "/static/audio/anxious.mp3", stimulus: "مضطرب"},
+            {image: "/static/visual/surprised.png", sound: "/static/audio/surprised.mp3", stimulus: "شگفت‌زده"},
+            {image: "/static/visual/dazed.png", sound: "/static/audio/dazed.mp3", stimulus: "مبهوت"},
+            {image: "/static/visual/love.png", sound: "/static/audio/love.mp3", stimulus: "عاشقانه"}
+        ];
+
+        let current = 0;
+        let start;
+        let results = [];
+
+        function next() {
+            if (current >= trials.length) {
+                sendData();
+                return;
+            }
+
+            const t = trials[current];
+            document.getElementById("face").src = t.image;
+            document.getElementById("audio").src = t.sound;
+            start = performance.now();
+        }
+
+        function respond(resp) {
+            const rt = ((performance.now() - start) / 1000).toFixed(3);
+            const t = trials[current];
+            results.push({
+                word: t.image,
+                stimulus: t.stimulus,
+                response: resp,
+                correct: resp === t.stimulus,
+                rt: rt
+            });
+            current++;
+            next();
+        }
+
+        function sendData() {
+            fetch(`/submit/${session_id}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name, participant_id, age, gender, education, job,
+                    marital_status, attempt, test_type, answers: results
+                })
+            })
+            .then(r => r.json())
+            .then(d => {
+                alert("پایان تست چهره‌ای. فایل ذخیره شد.");
+                window.location.href = `/chart/${d.chart.split('/').pop()}`;
+            });
+        }
+
+        next();
+    </script>
+</body>
+</html>

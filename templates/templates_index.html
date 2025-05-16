@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>فرم ثبت‌نام آزمودنی</title>
+</head>
+<body>
+    <h2>فرم ثبت‌نام</h2>
+
+    <form action="/start" method="post">
+        <label>کد داوطلب: <input name="participant_id" required></label><br>
+        <label>نام: <input name="name" required></label><br>
+        <label>سن: <input name="age" type="number" required></label><br>
+        <label>جنسیت:
+            <select name="gender">
+                <option>مرد</option>
+                <option>زن</option>
+            </select>
+        </label><br>
+        <label>تحصیلات:
+            <select name="education">
+                <option>زیر دیپلم</option>
+                <option>دیپلم</option>
+                <option>کاردانی</option>
+                <option>کارشناسی</option>
+                <option>کارشناسی‌ارشد</option>
+                <option>دکترا</option>
+            </select>
+        </label><br>
+        <label>شغل: <input name="job"></label><br>
+        <label>وضعیت تأهل:
+            <select name="marital_status">
+                <option>مجرد</option>
+                <option>متأهل</option>
+            </select>
+        </label><br>
+        <label>دفعه چندم است تست می‌دهید؟
+            <select name="attempt">
+                <option>اولین بار</option>
+                <option>دومین بار</option>
+                <option>سوم یا بیشتر</option>
+            </select>
+        </label><br>
+        <label>نوع تست:
+            <select name="test_type">
+                <option value="classic">کلاسیک</option>
+                <option value="emotional">هیجانی</option>
+                <option value="spatial">مکانی</option>
+                <option value="facial">چهره‌ای</option>
+            </select>
+        </label><br><br>
+
+        <button type="submit">شروع تست</button>
+    </form>
+</body>
+</html>

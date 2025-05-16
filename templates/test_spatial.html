@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>تست مکانی استروپ</title>
+    <style>
+        #stimulus {
+            font-size: 35px;
+            margin: 50px;
+        }
+        .left {
+            text-align: left;
+        }
+        .right {
+            text-align: right;
+        }
+        .center {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <h3>تست مکانی - لطفاً معنی کلمه را انتخاب کن (نه موقعیت)</h3>
+
+    <div id="stimulus" class="center"></div>
+
+    <div>
+        <button onclick="respond('چپ')">چپ</button>
+        <button onclick="respond('راست')">راست</button>
+    </div>
+
+    <script>
+        const name = "{{ name }}";
+        const test_type = "{{ test_type }}";
+        const session_id = "{{ session_id }}";
+        const participant_id = "{{ participant_id }}";
+        const age = "{{ age }}";
+        const gender = "{{ gender }}";
+        const education = "{{ education }}";
+        const job = "{{ job }}";
+        const marital_status = "{{ marital_status }}";
+        const attempt = "{{ attempt }}";
+
+        const trials = [
+            {word: "چپ", position: "right"},
+            {word: "راست", position: "left"},
+            {word: "چپ", position: "left"},
+            {word: "راست", position: "right"},
+            {word: "چپ", position: "center"},
+        ];
+
+        let current = 0;
+        let start;
+        let results = [];
+
+        function next() {
+            if (current >= trials.length) {
+                sendData();
+                return;
+            }
+
+            const t = trials[current];
+            const el = document.getElementById("stimulus");
+            el.innerText = t.word;
+            el.className = t.position;
+            start = performance.now();
+        }
+
+        function respond(resp) {
+            const rt = ((performance.now() - start) / 1000).toFixed(3);
+            const t = trials[current];
+            results.push({
+                word: t.word,
+                stimulus: t.position,
+                response: resp,
+                correct: resp === t.word,
+                rt: rt
+            });
+            current++;
+            next();
+        }
+
+        function sendData() {
+            fetch(`/submit/${session_id}`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name, participant_id, age, gender, education, job,
+                    marital_status, attempt, test_type, answers: results
+                })
+            })
+            .then(r => r.json())
+            .then(d => {
+                alert("پایان تست مکانی. فایل ذخیره شد.");
+                window.location.href = `/chart/${d.chart.split('/').pop()}`;
+            });
+        }
+
+        next();
+    </script>
+</body>
+</html>

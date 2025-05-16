@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>تست کلاسیک استروپ</title>
+</head>
+<body>
+    <h3>تست کلاسیک - رنگ کلمه را انتخاب کن</h3>
+
+    <div id="stimulus" style="font-size:40px; margin: 20px;"></div>
+
+    <div>
+        <button onclick="respond('red')">قرمز</button>
+        <button onclick="respond('blue')">آبی</button>
+        <button onclick="respond('green')">سبز</button>
+        <button onclick="respond('yellow')">زرد</button>
+    </div>
+
+    <script>
+        // اطلاعات ارسالی از سرور (name، test_type و ...)
+        const name = "{{ name }}";
+        const test_type = "{{ test_type }}";
+        const session_id = "{{ session_id }}";
+
+        // داده‌های آزمایشی - هر مورد شامل کلمه و رنگ نمایش است
+        const trials = [
+            {word: "قرمز", stimulus: "red"},
+            {word: "آبی", stimulus: "blue"},
+            {word: "قرمز", stimulus: "blue"},
+            {word: "سبز", stimulus: "green"},
+            {word: "زرد", stimulus: "red"}
+        ];
+
+        let current = 0;            // شماره تست فعلی
+        let start;                  // زمان شروع برای محاسبه Reaction Time
+        let results = [];           // لیست نتایج ثبت‌شده
+
+        function next() {
+            if (current >= trials.length) {
+                sendData();  // اگر تموم شد، ارسال کن
+                return;
+            }
+
+            const t = trials[current];
+            const el = document.getElementById("stimulus");
+            el.innerText = t.word;          // نمایش کلمه
+            el.style.color = t.stimulus;    // رنگ فونت
+            start = performance.now();      // زمان شروع اندازه‌گیری
+        }
+
+        function respond(resp) {
+            const rt = ((performance.now() - start) / 1000).toFixed(3);  // محاسبه RT
+            const t = trials[current];
+            results.push({
+                word: t.word,
+                stimulus: t.stimulus,
+                response: resp,
+                correct: resp === t.stimulus,
+                rt: rt
+            });
+            current++;
+            next();
+        }
+
+        function sendData() {
+            fetch(`/submit/${session_id}`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    name, test_type, answers: results
+                })
+            })
+            .then(r => r.json())
+            .then(d => {
+                alert("پایان تست! فایل ذخیره شد.");
+                window.location.href = `/chart/${d.chart.split('/').pop()}`;  // نمایش نمودار
+            });
+        }
+
+        next();  // شروع اولین تست
+    </script>
+</body>
+</html>

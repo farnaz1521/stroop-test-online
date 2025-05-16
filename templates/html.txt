@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>تست استروپ</title>
+</head>
+<body>
+    <h2>فرم ثبت‌نام آزمودنی</h2>
+
+    <form action="/start" method="post">
+        <label>نام: <input name="name" required></label><br>
+        <label>سن: <input name="age" type="number" required></label><br>
+
+        <label>جنسیت:
+            <select name="gender">
+                <option>مرد</option>
+                <option>زن</option>
+            </select>
+        </label><br>
+
+        <label>نوع تست:
+            <select name="test_type">
+                <option value="classic">کلاسیک</option>
+                <option value="emotional">هیجانی</option>
+                <option value="spatial">مکانی</option>
+                <option value="facial">چهره‌ای</option>
+            </select>
+        </label><br><br>
+
+        <button type="submit">شروع تست</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>فرم ثبت‌نام تست استروپ</title>
+</head>
+<body>
+    <h2>فرم ثبت‌نام شرکت در تست استروپ</h2>
+    <form action="/start" method="POST">
+        <label>نام و نام خانوادگی:</label><br>
+        <input type="text" name="name" required><br><br>
+
+        <label>کد داوطلب:</label><br>
+        <input type="text" name="participant_id" required><br><br>
+
+        <label>سن:</label><br>
+        <input type="number" name="age" required><br><br>
+
+        <label>جنسیت:</label><br>
+        <select name="gender" required>
+            <option value="مرد">مرد</option>
+            <option value="زن">زن</option>
+            <option value="سایر">سایر</option>
+        </select><br><br>
+
+        <label>تحصیلات:</label><br>
+        <input type="text" name="education" required><br><br>
+
+        <label>شغل:</label><br>
+        <input type="text" name="job" required><br><br>
+
+        <label>وضعیت تأهل:</label><br>
+        <select name="marital_status" required>
+            <option value="مجرد">مجرد</option>
+            <option value="متأهل">متأهل</option>
+            <option value="سایر">سایر</option>
+        </select><br><br>
+
+        <label>چندمین بار است که تست را انجام می‌دهید؟</label><br>
+        <input type="number" name="attempt" value="1" min="1" required><br><br>
+
+        <label>نوع تست:</label><br>
+        <select name="test_type" required>
+            <option value="classic">کلاسیک</option>
+            <option value="emotional">هیجانی</option>
+            <option value="spatial">مکانی</option>
+            <option value="facial">چهره‌ای</option>
+        </select><br><br>
+
+        <button type="submit">شروع تست</button>
+    </form>
+</body>
+</html>

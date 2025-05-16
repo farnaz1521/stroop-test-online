@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <title>تست هیجانی استروپ</title>
+</head>
+<body>
+    <h3>تست هیجانی - بار هیجانی کلمه را انتخاب کن</h3>
+
+    <div id="stimulus" style="font-size:35px; margin:20px;"></div>
+
+    <div>
+        <button onclick="respond('مثبت')">مثبت</button>
+        <button onclick="respond('منفی')">منفی</button>
+        <button onclick="respond('خنثی')">خنثی</button>
+    </div>
+
+    <script>
+        const name = "{{ name }}";
+        const test_type = "{{ test_type }}";
+        const session_id = "{{ session_id }}";
+
+        const trials = [
+            {word: "موفقیت", stimulus: "مثبت"},
+            {word: "شکست", stimulus: "منفی"},
+            {word: "صندلی", stimulus: "خنثی"},
+            {word: "دوست‌داشتنی", stimulus: "مثبت"},
+            {word: "تنفر", stimulus: "منفی"}
+        ];
+
+        let current = 0;
+        let start;
+        let results = [];
+
+        function next() {
+            if (current >= trials.length) {
+                sendData();
+                return;
+            }
+
+            const t = trials[current];
+            document.getElementById("stimulus").innerText = t.word;
+            start = performance.now();
+        }
+
+        function respond(resp) {
+            const rt = ((performance.now() - start) / 1000).toFixed(3);
+            const t = trials[current];
+            results.push({
+                word: t.word,
+                stimulus: t.stimulus,
+                response: resp,
+                correct: resp === t.stimulus,
+                rt: rt
+            });
+            current++;
+            next();
+        }
+
+        function sendData() {
+            fetch(`/submit/${session_id}`, {
+                method: "POST",
+                headers: {"Content-Type": "application/json"},
+                body: JSON.stringify({
+                    name, test_type, answers: results
+                })
+            })
+            .then(r => r.json())
+            .then(d => {
+                alert("پایان تست هیجانی. فایل ذخیره شد.");
+                window.location.href = `/chart/${d.chart.split('/').pop()}`;
+            });
+        }
+
+        next();
+    </script>
+</body>
+</html>
